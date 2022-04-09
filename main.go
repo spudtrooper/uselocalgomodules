@@ -17,9 +17,10 @@ import (
 )
 
 var (
-	dir    = flag.String("dir", ".", "Directory where go.mod to update is")
-	depth  = flag.Int("depth", 1, "Number of levels up to search for other modules")
-	dryRun = flag.Bool("dry_run", false, "Just print the new contents of go.mod")
+	dir     = flag.String("dir", ".", "Directory where go.mod to update is")
+	depth   = flag.Int("depth", 1, "Number of levels up to search for other modules")
+	dryRun  = flag.Bool("dry_run", false, "Just print the new contents of go.mod")
+	verbose = flag.Bool("verbose", false, "Verbose logging")
 
 	// module github.com/spudtrooper/uselocalrequires
 	moduleRE = regexp.MustCompile(`^module\s+(\S+)$`)
@@ -175,6 +176,11 @@ func realMain() error {
 	goModules, err := findModules(*dir)
 	if err != nil {
 		return err
+	}
+
+	if *verbose {
+		log.Printf("have %d requires from %s", len(requires), goModFile)
+		log.Printf("have %d modules", len(goModules))
 	}
 
 	var repls []replacement
